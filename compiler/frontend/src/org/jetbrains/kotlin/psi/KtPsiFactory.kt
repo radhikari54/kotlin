@@ -98,6 +98,11 @@ class KtPsiFactory(private val project: Project) {
         return typeReference
     }
 
+    fun createTypeParameterList(text: String): KtTypeParameterList {
+        val klass = createClass("class Foo$text")
+        return klass.typeParameterList!!
+    }
+
     fun createTypeIfPossible(type: String): KtTypeReference? {
         val typeReference = createProperty("val x : $type").typeReference
         return if (typeReference?.text == type) typeReference else null
