@@ -116,7 +116,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
         }
 
     override val nestedClasses: Collection<KClass<*>>
-        get() = descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors().filterNot(DescriptorUtils::isEnumEntry).map {
+        get() = descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors().filterNot(DescriptorUtils::isEnumEntry).mapNotNull {
             nestedClass ->
             (nestedClass as ClassDescriptor).toJavaClass() ?: run {
                 // If neither a Kotlin class nor a Java class, it must be a built-in
@@ -127,7 +127,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
                 // All pseudo-classes like String.Companion must be accessible from the current class loader
                 (this as Any).javaClass.safeClassLoader.tryLoadClass("$packageName.$className")
             }
-        }.filterNotNull().map { KClassImpl(it) }
+        }.map { KClassImpl(it) }
 
     @Suppress("UNCHECKED_CAST")
     private val objectInstance_ = ReflectProperties.lazy {

@@ -73,10 +73,9 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
                 .filter { descriptor ->
                     descriptor !is MemberDescriptor || descriptor.visibility != Visibilities.INVISIBLE_FAKE
                 }
-                .map { descriptor ->
+                .mapNotNull { descriptor ->
                     descriptor.accept(visitor, Unit)
                 }
-                .filterNotNull()
     }
 
     private fun createProperty(descriptor: PropertyDescriptor): KPropertyImpl<*> {
