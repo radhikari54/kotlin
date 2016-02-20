@@ -786,6 +786,10 @@ fun main(args: Array<String>) {
         }
     }
 
+    testGroup("idea-ultimate/tests", "idea-ultimate/testData") {
+
+    }
+
     testGroup("idea/tests", "compiler/testData") {
         testClass<AbstractResolveByStubTest>() {
             model("loadJava/compiledKotlin")
