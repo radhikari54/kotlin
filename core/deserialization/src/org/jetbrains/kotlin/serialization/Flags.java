@@ -55,7 +55,9 @@ public class Flags {
     // Properties
 
     public static final BooleanFlagField IS_VAR = FlagField.booleanAfter(MEMBER_KIND);
+    @Deprecated // This field is no longer read by the new compiler
     public static final BooleanFlagField HAS_GETTER = FlagField.booleanAfter(IS_VAR);
+    @SuppressWarnings("deprecation")
     public static final BooleanFlagField HAS_SETTER = FlagField.booleanAfter(HAS_GETTER);
     public static final BooleanFlagField IS_CONST = FlagField.booleanAfter(HAS_SETTER);
     public static final BooleanFlagField IS_LATEINIT = FlagField.booleanAfter(IS_CONST);
@@ -155,6 +157,7 @@ public class Flags {
                 ;
     }
 
+    @SuppressWarnings("deprecation")
     public static int getPropertyFlags(
             boolean hasAnnotations,
             @NotNull Visibility visibility,

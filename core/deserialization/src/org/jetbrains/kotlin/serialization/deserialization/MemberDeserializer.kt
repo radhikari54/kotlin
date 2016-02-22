@@ -52,8 +52,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
 
         val local = c.childContext(property, proto.typeParameterList)
 
-        val hasGetter = Flags.HAS_GETTER.get(flags)
-        val receiverAnnotations = if (hasGetter && proto.hasReceiver())
+        val receiverAnnotations = if (proto.hasReceiver())
             getReceiverParameterAnnotations(proto, AnnotatedCallableKind.PROPERTY_GETTER)
         else
             Annotations.EMPTY
@@ -65,30 +64,24 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 proto.receiverType(c.typeTable)?.let { local.typeDeserializer.type(it, receiverAnnotations) }
         )
 
-        val getter = if (hasGetter) {
-            val getterFlags = proto.getterFlags
-            val isNotDefault = proto.hasGetterFlags() && Flags.IS_NOT_DEFAULT.get(getterFlags)
-            val isExternal = proto.hasGetterFlags() && Flags.IS_EXTERNAL_ACCESSOR.get(getterFlags)
-            val getter = if (isNotDefault) {
-                PropertyGetterDescriptorImpl(
-                        property,
-                        getAnnotations(proto, getterFlags, AnnotatedCallableKind.PROPERTY_GETTER),
-                        Deserialization.modality(Flags.MODALITY.get(getterFlags)),
-                        Deserialization.visibility(Flags.VISIBILITY.get(getterFlags)),
-                        /* isDefault = */ !isNotDefault,
-                        /* isExternal = */ isExternal,
-                        property.kind, null, SourceElement.NO_SOURCE
-                )
-            }
-            else {
-                DescriptorFactory.createDefaultGetter(property, Annotations.EMPTY)
-            }
-            getter.initialize(property.returnType)
-            getter
+        val getterFlags = proto.getterFlags
+        val isGetterNotDefault = proto.hasGetterFlags() && Flags.IS_NOT_DEFAULT.get(getterFlags)
+
+        val getter = if (isGetterNotDefault) {
+            PropertyGetterDescriptorImpl(
+                    property,
+                    getAnnotations(proto, getterFlags, AnnotatedCallableKind.PROPERTY_GETTER),
+                    Deserialization.modality(Flags.MODALITY.get(getterFlags)),
+                    Deserialization.visibility(Flags.VISIBILITY.get(getterFlags)),
+                    /* isDefault = */ !isGetterNotDefault,
+                    /* isExternal = */ proto.hasGetterFlags() && Flags.IS_EXTERNAL_ACCESSOR.get(getterFlags),
+                    property.kind, null, SourceElement.NO_SOURCE
+            )
         }
         else {
-            null
+            DescriptorFactory.createDefaultGetter(property, Annotations.EMPTY)
         }
+        getter.initialize(property.returnType)
 
         val setter = if (Flags.HAS_SETTER.get(flags)) {
             val setterFlags = proto.setterFlags
