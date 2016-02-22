@@ -32,6 +32,7 @@ import java.util.List;
 
 public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements JavaCallableMemberDescriptor {
     private final boolean isStaticFinal;
+
     public JavaPropertyDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
@@ -78,7 +79,8 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
         if (getter != null) {
             newGetter = new PropertyGetterDescriptorImpl(
                     enhanced, getter.getAnnotations(), getter.getModality(), getter.getVisibility(),
-                    getter.hasBody(), getter.isDefault(), getter.isExternal(), getKind(), getter, getter.getSource());
+                    getter.isDefault(), getter.isExternal(), getKind(), getter, getter.getSource()
+            );
             newGetter.setInitialSignatureDescriptor(getter.getInitialSignatureDescriptor());
             newGetter.initialize(enhancedReturnType);
         }
@@ -88,7 +90,8 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
         if (setter != null) {
             newSetter = new PropertySetterDescriptorImpl(
                     enhanced, setter.getAnnotations(), setter.getModality(), setter.getVisibility(),
-                    setter.hasBody(), setter.isDefault(), setter.isExternal(), getKind(), setter, setter.getSource());
+                    setter.isDefault(), setter.isExternal(), getKind(), setter, setter.getSource()
+            );
             newSetter.setInitialSignatureDescriptor(newSetter.getInitialSignatureDescriptor());
             newSetter.initialize(setter.getValueParameters().get(0));
         }

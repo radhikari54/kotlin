@@ -30,9 +30,7 @@ import java.util.List;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
 public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl implements PropertySetterDescriptor {
-
     private ValueParameterDescriptor parameter;
-    @NotNull
     private final PropertySetterDescriptor original;
 
     public PropertySetterDescriptorImpl(
@@ -40,7 +38,6 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
             @NotNull Annotations annotations,
             @NotNull Modality modality,
             @NotNull Visibility visibility,
-            boolean hasBody,
             boolean isDefault,
             boolean isExternal,
             @NotNull Kind kind,
@@ -48,7 +45,7 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
             @NotNull SourceElement source
     ) {
         super(modality, visibility, correspondingProperty, annotations, Name.special("<set-" + correspondingProperty.getName() + ">"),
-              hasBody, isDefault, isExternal, kind, source);
+              isDefault, isExternal, kind, source);
         this.original = original != null ? original : this;
     }
 
