@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.impl.source.tree.JavaElementType
 import com.intellij.util.containers.IntArrayList
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -97,6 +98,24 @@ class JvmDependenciesIndex(_roots: List<JavaRoot>) {
         search(TraverseRequest(packageFqName, acceptedRootTypes)) { dir, rootType ->
             HandleResult(Unit, continueSearch(dir, rootType))
         }
+    }
+
+    fun collectKnownClassNamesInPackage(
+            packageFqName: FqName
+    ): Set<String> {
+        var result = hashSetOf<String>()
+        traverseDirectoriesInPackage(packageFqName, continueSearch = {
+            dir, rootType ->
+
+            for (child in dir.children) {
+                if (child.extension != "class" && child.extension != "java") continue
+                result.add(child.nameWithoutExtension)
+            }
+
+            true
+        })
+
+        return result
     }
 
     private data class HandleResult<T : Any>(val result: T?, val continueSearch: Boolean)
