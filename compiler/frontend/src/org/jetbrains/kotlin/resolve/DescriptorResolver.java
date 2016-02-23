@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
@@ -900,10 +899,9 @@ public class DescriptorResolver {
                     annotationResolver.resolveAnnotationsWithoutArguments(scopeWithTypeParameters, getter.getModifierList(), trace)));
 
             KotlinType outType = propertyDescriptor.getType();
-            KotlinType returnType = outType;
             KtTypeReference returnTypeReference = getter.getReturnTypeReference();
             if (returnTypeReference != null) {
-                returnType = typeResolver.resolveType(scopeWithTypeParameters, returnTypeReference, trace, true);
+                KotlinType returnType = typeResolver.resolveType(scopeWithTypeParameters, returnTypeReference, trace, true);
                 if (!TypeUtils.equalTypes(returnType, outType)) {
                     trace.report(WRONG_GETTER_RETURN_TYPE.on(returnTypeReference, propertyDescriptor.getReturnType(), outType));
                 }
@@ -916,18 +914,12 @@ public class DescriptorResolver {
                     /* isDefault = */ false, getter.hasModifier(EXTERNAL_KEYWORD),
                     CallableMemberDescriptor.Kind.DECLARATION, null, KotlinSourceElementKt.toSourceElement(getter)
             );
-            if (returnType.isError() && !getter.hasBlockBody() && getter.hasBody()) {
-                returnType = inferReturnTypeFromExpressionBody(storageManager, expressionTypingServices, trace, scopeWithTypeParameters,
-                                                               DataFlowInfoFactory.EMPTY, getter, getterDescriptor);
-            }
-            getterDescriptor.initialize(returnType);
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
         }
         else {
             Annotations getterAnnotations = annotationSplitter.getAnnotationsForTarget(PROPERTY_GETTER);
             getterDescriptor = DescriptorFactory.createGetter(propertyDescriptor, getterAnnotations, !property.hasDelegate(),
                                                               /* isExternal = */ false);
-            getterDescriptor.initialize(propertyDescriptor.getType());
         }
         return getterDescriptor;
     }
@@ -1010,7 +1002,6 @@ public class DescriptorResolver {
                 propertyDescriptor.isVar() ? DescriptorFactory.createDefaultSetter(propertyDescriptor, setterAnnotations) : null;
 
         propertyDescriptor.initialize(getter, setter);
-        getter.initialize(propertyDescriptor.getType());
 
         trace.record(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter, propertyDescriptor);
         trace.record(BindingContext.VALUE_PARAMETER_AS_PROPERTY, valueParameter, propertyDescriptor);

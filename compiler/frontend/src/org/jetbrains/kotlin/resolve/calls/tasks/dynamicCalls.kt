@@ -102,12 +102,9 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
         )
 
         val getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.EMPTY)
-        getter.initialize(propertyDescriptor.type)
         val setter = DescriptorFactory.createDefaultSetter(propertyDescriptor, Annotations.EMPTY)
 
-        propertyDescriptor.initialize(getter, setter)
-
-        return propertyDescriptor
+        return propertyDescriptor.apply { initialize(getter, setter) }
     }
 
     private fun createDynamicFunction(owner: DeclarationDescriptor, name: Name, call: Call): SimpleFunctionDescriptorImpl {

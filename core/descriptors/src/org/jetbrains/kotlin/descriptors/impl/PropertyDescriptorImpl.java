@@ -264,9 +264,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
                 SourceElement.NO_SOURCE
         );
         if (newGetter != null) {
-            KotlinType returnType = getter.getReturnType();
             newGetter.setInitialSignatureDescriptor(getSubstitutedInitialSignatureDescriptor(substitutor, getter));
-            newGetter.initialize(returnType != null ? substitutor.substitute(returnType, Variance.OUT_VARIANCE) : null);
         }
         PropertySetterDescriptorImpl newSetter = setter == null ? null : new PropertySetterDescriptorImpl(
                 substitutedDescriptor, setter.getAnnotations(), newModality, setter.getVisibility(),

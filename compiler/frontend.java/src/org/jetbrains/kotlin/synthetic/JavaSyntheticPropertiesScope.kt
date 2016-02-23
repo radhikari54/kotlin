@@ -319,7 +319,6 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
                                                           CallableMemberDescriptor.Kind.SYNTHESIZED,
                                                           null,
                                                           SourceElement.NO_SOURCE)
-                getter.initialize(null)
 
                 val setter = if (setMethod != null)
                     PropertySetterDescriptorImpl(descriptor,

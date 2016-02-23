@@ -169,11 +169,7 @@ class PropertyReferenceCodegen(
     companion object {
         @JvmStatic
         fun getPropertyReferenceSignature(property: PropertyDescriptor, state: GenerationState): String {
-            val getter =
-                    property.getter ?: DescriptorFactory.createDefaultGetter(property, Annotations.EMPTY).apply {
-                        initialize(property.type)
-                    }
-
+            val getter = property.getter ?: DescriptorFactory.createDefaultGetter(property, Annotations.EMPTY)
             val method = state.typeMapper.mapSignature(getter).asmMethod
             return method.name + method.descriptor
         }

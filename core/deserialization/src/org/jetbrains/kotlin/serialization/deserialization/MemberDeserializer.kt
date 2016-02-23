@@ -81,7 +81,6 @@ class MemberDeserializer(private val c: DeserializationContext) {
         else {
             DescriptorFactory.createDefaultGetter(property, Annotations.EMPTY)
         }
-        getter.initialize(property.returnType)
 
         val setter = if (Flags.HAS_SETTER.get(flags)) {
             val setterFlags = proto.setterFlags

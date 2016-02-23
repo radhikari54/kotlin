@@ -127,11 +127,7 @@ private fun genProperty(
             SourceElement.NO_SOURCE
     )
 
-    getter.initialize(null)
-
-    property.initialize(getter, null)
-
-    return property
+    return property.apply { initialize(getter, null) }
 }
 
 interface AndroidSyntheticFunction

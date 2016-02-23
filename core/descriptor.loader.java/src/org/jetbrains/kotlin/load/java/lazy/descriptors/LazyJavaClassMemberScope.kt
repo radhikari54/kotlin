@@ -396,7 +396,6 @@ class LazyJavaClassMemberScope(
 
         val returnType = givenType ?: computeMethodReturnType(method, annotations, c.child(propertyDescriptor, method))
         propertyDescriptor.setType(returnType, listOf(), getDispatchReceiverParameter(), null as KotlinType?)
-        getter.initialize(returnType)
 
         return propertyDescriptor
     }
@@ -433,7 +432,6 @@ class LazyJavaClassMemberScope(
                 /* isExternal = */ false, getterMethod.source
         ).apply {
             initialSignatureDescriptor = getterMethod
-            initialize(propertyDescriptor.type)
         }
 
         val setter = setterMethod?.let { setterMethod ->

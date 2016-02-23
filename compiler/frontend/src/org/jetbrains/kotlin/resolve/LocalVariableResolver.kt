@@ -151,7 +151,6 @@ class LocalVariableResolver(
         var getter = propertyDescriptor.getter
         if (getter == null && !Visibilities.isPrivate(propertyDescriptor.visibility)) {
             getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.EMPTY)
-            getter.initialize(propertyDescriptor.type)
         }
 
         var setter = propertyDescriptor.setter

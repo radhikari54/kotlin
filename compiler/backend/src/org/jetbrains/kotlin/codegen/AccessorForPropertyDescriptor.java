@@ -50,6 +50,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
              getterAccessorRequired, setterAccessorRequired);
     }
 
+    @SuppressWarnings("unused") // Used in AccessorForPropertyBackingField
     protected AccessorForPropertyDescriptor(
             @NotNull PropertyDescriptor original,
             @NotNull KotlinType propertyType,
@@ -96,7 +97,6 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
         public Getter(AccessorForPropertyDescriptor property) {
             super(property, Annotations.Companion.getEMPTY(), Modality.FINAL, Visibilities.LOCAL,
                   /* isDefault = */ false, /* isExternal = */ false, Kind.DECLARATION, null, SourceElement.NO_SOURCE);
-            initialize(property.getType());
         }
 
         @NotNull

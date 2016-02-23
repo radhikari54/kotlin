@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class PropertyGetterDescriptorImpl extends PropertyAccessorDescriptorImpl implements PropertyGetterDescriptor {
-    private KotlinType returnType;
     private final PropertyGetterDescriptor original;
 
     public PropertyGetterDescriptorImpl(
@@ -47,10 +46,6 @@ public class PropertyGetterDescriptorImpl extends PropertyAccessorDescriptorImpl
         this.original = original != null ? original : this;
     }
     
-    public void initialize(KotlinType returnType) {
-        this.returnType = returnType == null ? getCorrespondingProperty().getType() : returnType;
-    }
-
     @NotNull
     @Override
     @SuppressWarnings("unchecked")
@@ -66,7 +61,7 @@ public class PropertyGetterDescriptorImpl extends PropertyAccessorDescriptorImpl
 
     @Override
     public KotlinType getReturnType() {
-        return returnType;
+        return getCorrespondingProperty().getType();
     }
 
     @Override
@@ -77,6 +72,6 @@ public class PropertyGetterDescriptorImpl extends PropertyAccessorDescriptorImpl
     @NotNull
     @Override
     public PropertyGetterDescriptor getOriginal() {
-        return this.original;
+        return original;
     }
 }

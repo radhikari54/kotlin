@@ -82,7 +82,6 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
                     getter.isDefault(), getter.isExternal(), getKind(), getter, getter.getSource()
             );
             newGetter.setInitialSignatureDescriptor(getter.getInitialSignatureDescriptor());
-            newGetter.initialize(enhancedReturnType);
         }
 
         PropertySetterDescriptorImpl newSetter = null;
