@@ -22,6 +22,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -36,16 +37,15 @@ import org.jetbrains.kotlin.resolve.ModifiersChecker
 
 const val IMPL_SUFFIX = "Impl"
 
-class CreateKotlinSubClassIntention : SelfTargetingIntention<KtClass>(KtClass::class.java,
-                                                                      "Create Kotlin subclass") {
+class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtClass::class.java, "Create Kotlin subclass") {
 
-    override fun isApplicableTo(element: KtClass, caretOffset: Int): Boolean {
+    override fun applicabilityRange(element: KtClass): TextRange? {
         val baseClass = element
         if (baseClass.isEnum() || baseClass.isAnnotation() || baseClass.name == null) {
-            return false
+            return null
         }
         if (!baseClass.isInterface() && !baseClass.isSealed() && !baseClass.isAbstract() && !baseClass.hasModifier(KtTokens.OPEN_KEYWORD)) {
-            return false
+            return null
         }
         val primaryConstructor = baseClass.getPrimaryConstructor()
         if (!baseClass.isInterface() && primaryConstructor != null) {
@@ -56,17 +56,11 @@ class CreateKotlinSubClassIntention : SelfTargetingIntention<KtClass>(KtClass::c
             }) {
                 // At this moment we require non-private default constructor
                 // TODO: handle non-private constructors with parameters
-                return false
+                return null
             }
         }
-
-        val endOffset = baseClass.getBody()?.lBrace?.startOffset ?: baseClass.endOffset
-        if (caretOffset >= endOffset) {
-            return false
-        }
-
         text = getImplementTitle(baseClass)
-        return true
+        return TextRange(baseClass.startOffset, baseClass.getBody()?.lBrace?.startOffset ?: baseClass.endOffset)
     }
 
     private fun getImplementTitle(baseClass: KtClass) =
