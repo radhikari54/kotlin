@@ -4479,6 +4479,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/implement"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("annotation.kt")
+        public void testAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/annotation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("enum.kt")
+        public void testEnum() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/enum.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("finalClass.kt")
         public void testFinalClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/finalClass.kt");
@@ -4518,6 +4530,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("interface.kt")
         public void testInterface() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/interface.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("local.kt")
+        public void testLocal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/local.kt");
             doTest(fileName);
         }
 

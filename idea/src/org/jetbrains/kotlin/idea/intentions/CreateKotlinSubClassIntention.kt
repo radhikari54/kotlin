@@ -41,7 +41,8 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
 
     override fun applicabilityRange(element: KtClass): TextRange? {
         val baseClass = element
-        if (baseClass.isEnum() || baseClass.isAnnotation() || baseClass.name == null) {
+        if (baseClass.getParentOfType<KtFunction>(true) != null) {
+            // Local classes are not supported
             return null
         }
         if (!baseClass.isInterface() && !baseClass.isSealed() && !baseClass.isAbstract() && !baseClass.hasModifier(KtTokens.OPEN_KEYWORD)) {
