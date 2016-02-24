@@ -4509,6 +4509,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("incorrectRange.kt")
+        public void testIncorrectRange() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/incorrectRange.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("interface.kt")
         public void testInterface() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/interface.kt");

@@ -60,7 +60,7 @@ class CreateKotlinSubClassIntention : SelfTargetingIntention<KtClass>(KtClass::c
             }
         }
 
-        val endOffset = baseClass.node.findChildByType(KtTokens.LBRACE)?.startOffset ?: baseClass.endOffset
+        val endOffset = baseClass.getBody()?.lBrace?.startOffset ?: baseClass.endOffset
         if (caretOffset >= endOffset) {
             return false
         }
