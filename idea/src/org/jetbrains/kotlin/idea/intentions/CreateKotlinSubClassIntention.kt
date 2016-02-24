@@ -97,7 +97,7 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
         var container: KtClassOrObject = baseClass
         var name = baseClass.name!!
         var visibility = ModifiersChecker.resolveVisibilityFromModifiers(baseClass, Visibilities.PUBLIC)
-        while (!container.isPrivate() && !container.isProtected()) {
+        while (!container.isPrivate() && !container.isProtected() && !(container is KtClass && container.isInner())) {
             val parent = container.containingClassOrObject
             if (parent != null) {
                 val parentName = parent.name
@@ -165,8 +165,15 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
             superTypeEntry = factory.createSuperTypeEntry(name)
         }
         else {
+            var modifiers = ""
             if (defaultVisibility != Visibilities.PUBLIC) {
-                KtPsiUtil.replaceModifierList(targetClass, factory.createModifierList(defaultVisibility.name))
+                modifiers += defaultVisibility.name
+            }
+            if (baseClass.isInner()) {
+                modifiers += " inner"
+            }
+            if (modifiers.isNotEmpty()) {
+                KtPsiUtil.replaceModifierList(targetClass, factory.createModifierList(modifiers))
             }
             superTypeEntry = factory.createSuperTypeCallEntry("$name()")
         }

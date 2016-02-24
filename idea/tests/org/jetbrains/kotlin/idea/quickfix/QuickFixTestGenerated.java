@@ -4527,6 +4527,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inner.kt")
+        public void testInner() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/inner.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("interface.kt")
         public void testInterface() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/interface.kt");
@@ -4596,6 +4602,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("typeParameter.kt")
         public void testTypeParameter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/typeParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeParameterOut.kt")
+        public void testTypeParameterOut() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/typeParameterOut.kt");
             doTest(fileName);
         }
 
