@@ -4611,6 +4611,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("typeParameterWhere.kt")
+        public void testTypeParameterWhere() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/typeParameterWhere.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("typeParametersClass.kt")
         public void testTypeParametersClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/typeParametersClass.kt");

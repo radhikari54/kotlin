@@ -86,7 +86,7 @@ class KtPsiFactory(private val project: Project) {
     }
 
     fun createTypeArguments(text: String): KtTypeArgumentList {
-        val property = createProperty("val x = foo$text()")
+        val property = createProperty("val x = foo<$text>()")
         return (property.getInitializer() as KtCallExpression).typeArgumentList!!
     }
 
@@ -96,11 +96,6 @@ class KtPsiFactory(private val project: Project) {
             throw IllegalArgumentException("Incorrect type: $type")
         }
         return typeReference
-    }
-
-    fun createTypeParameterList(text: String): KtTypeParameterList {
-        val klass = createClass("class Foo$text")
-        return klass.typeParameterList!!
     }
 
     fun createTypeIfPossible(type: String): KtTypeReference? {
@@ -430,6 +425,99 @@ class KtPsiFactory(private val project: Project) {
     fun creareDelegatedSuperTypeEntry(text: String): KtConstructorDelegationCall {
         val colonOrEmpty = if (text.isEmpty()) "" else ": "
         return createClass("class A { constructor()$colonOrEmpty$text {}").getSecondaryConstructors().first().getDelegationCall()
+    }
+
+    class ClassHeaderBuilder {
+
+        enum class State {
+            MODIFIERS,
+            NAME,
+            TYPE_PARAMETERS,
+            BASE_CLASS,
+            TYPE_CONSTRAINTS,
+            DONE
+        }
+        private val sb = StringBuilder()
+        private var state = State.MODIFIERS
+
+        fun modifier(modifier: String): ClassHeaderBuilder {
+            assert(state == State.MODIFIERS)
+
+            sb.append(modifier)
+
+            return this
+        }
+
+        private fun placeKeyword() {
+            assert(state == State.MODIFIERS)
+
+            if (sb.length != 0) {
+                sb.append(" ")
+            }
+            sb.append("class ")
+
+            state = State.NAME
+        }
+
+
+        fun name(name: String): ClassHeaderBuilder {
+            placeKeyword()
+
+            sb.append(name)
+            state = State.TYPE_PARAMETERS
+
+            return this
+        }
+
+        private fun diamondedValues(values: Collection<String>) {
+            if (values.isNotEmpty()) {
+                sb.append(values.joinToString(", ", "<", ">", -1, ""))
+            }
+        }
+
+        fun typeParameters(values: Collection<String>): ClassHeaderBuilder {
+            assert(state == State.TYPE_PARAMETERS)
+
+            diamondedValues(values)
+            state = State.BASE_CLASS
+
+            return this
+        }
+
+        fun baseClass(name: String, typeArguments: Collection<String>, isInterface: Boolean): ClassHeaderBuilder {
+            assert(state == State.BASE_CLASS)
+
+            sb.append(" : $name")
+            diamondedValues(typeArguments)
+            if (!isInterface) {
+                sb.append("()")
+            }
+
+            state = State.TYPE_CONSTRAINTS
+
+            return this
+        }
+
+        fun typeConstraints(values: Collection<String>): ClassHeaderBuilder {
+            assert(state == State.TYPE_CONSTRAINTS)
+
+            if (!values.isEmpty()) {
+                sb.append(values.joinToString(", ", " where ", "", -1, ""))
+            }
+            state = State.DONE
+
+            return this
+        }
+
+        fun transform(f: StringBuilder.() -> Unit) = sb.f()
+
+        fun asString(): String {
+            if (state != State.DONE) {
+                state = State.DONE
+            }
+
+            return sb.toString()
+        }
     }
 
     class CallableBuilder(private val target: Target) {
