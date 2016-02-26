@@ -74,6 +74,7 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
             }
 
     override fun applyTo(element: KtClass, editor: Editor?) {
+        if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val baseClass = element
         if (baseClass.isSealed()) {
             createSealedSubclass(baseClass, editor)
@@ -85,7 +86,7 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
 
     private fun defaultTargetName(klass: KtClass) = "${klass.name!!}$IMPL_SUFFIX"
 
-    private fun createSealedSubclass(sealedClass: KtClass, editor: Editor?) {
+    private fun createSealedSubclass(sealedClass: KtClass, editor: Editor) {
         val project = sealedClass.project
         val builder = buildClassHeader(defaultTargetName(sealedClass), sealedClass)
         val classFromText = KtPsiFactory(project).createClass(builder.asString())
@@ -93,7 +94,7 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
         chooseAndImplementMethods(project, body.addBefore(classFromText, body.rBrace) as KtClass, editor)
     }
 
-    private fun createExternalSubclass(baseClass: KtClass, editor: Editor?) {
+    private fun createExternalSubclass(baseClass: KtClass, editor: Editor) {
         var container: KtClassOrObject = baseClass
         var name = baseClass.name!!
         var visibility = ModifiersChecker.resolveVisibilityFromModifiers(baseClass, Visibilities.PUBLIC)
@@ -173,10 +174,10 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
         }
     }
 
-    private fun chooseAndImplementMethods(project: Project, targetClass: KtClass, editor: Editor?) {
-        editor?.unblockDocument()
+    private fun chooseAndImplementMethods(project: Project, targetClass: KtClass, editor: Editor) {
+        editor.unblockDocument()
         targetClass.analyze()
-        editor!!.caretModel.moveToOffset(targetClass.textRange.startOffset)
+        editor.caretModel.moveToOffset(targetClass.textRange.startOffset)
         ImplementMembersHandler().invoke(project, editor, targetClass.containingFile)
     }
 }
