@@ -27,10 +27,9 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
-import org.jetbrains.kotlin.idea.quickfix.unblockDocument
 import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
+import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiFactory.ClassHeaderBuilder
@@ -122,9 +121,10 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
             val dlg = chooseSubclassToCreate(baseClass) ?: return
             val targetName = dlg.className
             val file = getOrCreateKotlinFile("$targetName.kt", dlg.targetDirectory)!!
-            val builder = buildClassHeader(targetName, baseClass)
+            val builder = buildClassHeader(targetName, baseClass, "${baseClass.fqName!!.asString()}")
             file.add(factory.createClass(builder.asString()))
             val klass = file.getChildOfType<KtClass>()!!
+            ShortenReferences.DEFAULT.process(klass)
             chooseAndImplementMethods(project, klass, CodeInsightUtil.positionCursor(project, file, klass) ?: editor)
 
         }
