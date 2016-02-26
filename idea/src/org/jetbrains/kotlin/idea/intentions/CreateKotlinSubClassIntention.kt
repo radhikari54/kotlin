@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInsight.CodeInsightUtil
 import com.intellij.codeInsight.daemon.impl.quickfix.CreateClassKind
 import com.intellij.codeInsight.intention.impl.CreateClassDialog
 import com.intellij.openapi.application.ApplicationManager
@@ -123,7 +124,8 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
             val file = getOrCreateKotlinFile("$targetName.kt", dlg.targetDirectory)!!
             val builder = buildClassHeader(targetName, baseClass)
             file.add(factory.createClass(builder.asString()))
-            chooseAndImplementMethods(project, file.getChildOfType<KtClass>()!!, editor)
+            val klass = file.getChildOfType<KtClass>()!!
+            chooseAndImplementMethods(project, klass, CodeInsightUtil.positionCursor(project, file, klass) ?: editor)
 
         }
         else {
