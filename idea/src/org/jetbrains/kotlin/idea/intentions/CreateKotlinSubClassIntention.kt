@@ -176,7 +176,6 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
 
     private fun chooseAndImplementMethods(project: Project, targetClass: KtClass, editor: Editor) {
         editor.unblockDocument()
-        targetClass.analyze()
         editor.caretModel.moveToOffset(targetClass.textRange.startOffset)
         ImplementMembersHandler().invoke(project, editor, targetClass.containingFile)
     }
