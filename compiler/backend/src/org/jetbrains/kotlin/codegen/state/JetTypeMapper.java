@@ -1044,7 +1044,10 @@ public class JetTypeMapper {
             sw.writeReturnTypeEnd();
         }
 
-        JvmMethodSignature signature = sw.makeJvmMethodSignature(mapFunctionName(f), f instanceof AccessorForCallableDescriptor);
+        JvmMethodSignature signature = sw.makeJvmMethodSignature(
+                mapFunctionName(f),
+                f instanceof AccessorForCallableDescriptor || kind == OwnerKind.DEFAULT_IMPLS
+        );
 
         if (kind != OwnerKind.DEFAULT_IMPLS) {
             SpecialSignatureInfo specialSignatureInfo = BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo(f);
